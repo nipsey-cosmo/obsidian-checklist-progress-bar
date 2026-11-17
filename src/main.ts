@@ -1,6 +1,6 @@
+import type { EditorView } from '@codemirror/view';
 import {
     Editor,
-    EditorChange,
     MarkdownView,
     Plugin,
     WorkspaceLeaf,
@@ -97,7 +97,7 @@ export default class ChecklistProgressBar extends Plugin {
      *
      * Replacing the whole document with `setValue` resets the scroll position
      * (and wipes undo history, folds and selections), so the changed lines are
-     * applied as a single transaction instead. `processLines` never adds or
+     * applied as a single dispatch instead. `processLines` never adds or
      * removes lines, so every change is confined to its own line and the
      * positions stay valid for the whole batch.
      */
@@ -105,21 +105,24 @@ export default class ChecklistProgressBar extends Plugin {
         const lines = editor.getValue().split('\n');
         const newLines = this.processLines(lines);
 
-        const changes: EditorChange[] = [];
+        const changes: { from: number; to: number; insert: string }[] = [];
         for (let i = 0; i < lines.length; i++) {
             const oldText = lines[i];
             const newText = newLines[i];
             if (oldText === undefined || newText === undefined || oldText === newText) continue;
 
-            changes.push({
-                from: { line: i, ch: 0 },
-                to: { line: i, ch: oldText.length },
-                text: newText,
-            });
+            const from = editor.posToOffset({ line: i, ch: 0 });
+            changes.push({ from, to: from + oldText.length, insert: newText });
         }
 
         if (changes.length > 0) {
-            editor.transaction({ changes });
+            // `Editor.transaction` and `Editor.replaceRange` always set
+            // `scrollIntoView`, which scrolls the page to the text cursor. A
+            // click on a checkbox does not move the cursor, so the page jumped
+            // to wherever the cursor was. Dispatch on the CodeMirror view
+            // instead (`editor.cm` is not in the public types).
+            const cm = (editor as unknown as { cm: EditorView }).cm;
+            cm.dispatch({ changes });
         }
     }
 
