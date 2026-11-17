@@ -100,7 +100,7 @@ The setting applies to every progress bar in your vault. The note you have open 
 3. Click **Install**, then **Enable**
 
 ### Manual
-1. Download the latest release from [GitHub Releases](https://github.com/profesr-chaos/obsidian-checklist-progress-bar/releases)
+1. Download the latest release from [GitHub Releases](https://github.com/nipsey-cosmo/obsidian-checklist-progress-bar/releases)
 2. Copy `main.js`, `manifest.json`, and `styles.css` into your vault at:
    ```
    <vault>/.obsidian/plugins/checklist-progress-bar/
@@ -118,4 +118,4 @@ The setting applies to every progress bar in your vault. The note you have open 
 
 ## Feedback & Contributions
 
-Found a bug or have a feature request? Open an issue on [GitHub](https://github.com/profesr-chaos/obsidian-checklist-progress-bar). Pull requests are welcome.
+Found a bug or have a feature request? Open an issue on [GitHub](https://github.com/nipsey-cosmo/obsidian-checklist-progress-bar). Pull requests are welcome.
